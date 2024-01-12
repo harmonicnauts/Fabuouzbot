@@ -1,7 +1,6 @@
-# Discord Music bot 
+# Fabuouoz Bot
 
-Bot for Fabuouz Discord channel. For now it can only be a music player. Will be developed again in the future.
-
+Bot for Fabuouz Discord channel. For now it can only be a music player. Will be developed again in the future. Based on some [github music discord bot repository](https://github.com/TannerGabriel/discord-bot).
 
 ## Requirements
 
@@ -9,8 +8,6 @@ Bot for Fabuouz Discord channel. For now it can only be a music player. Will be 
 - [NPM](https://www.npmjs.com/)
 - [FFMPEG](https://www.ffmpeg.org/)
 - [ytdl](https://github.com/ytdl-org/youtube-dl)
-
-
 
 ## Installation
 
@@ -29,12 +26,13 @@ npm install
 # Configure Discord Bot Token
  echo "DISCORD_TOKEN='INSERT_YOUR_TOKEN_HERE'" > .env
 ```
-    
+
 ## Required Permissions.
 
 Make sure that your bot has the `applications.commands` application scope enabled, which can be found under the `OAuth2` tab on the [developer portal](https://discord.com/developers/applications/)
 
 Enable the `Server Members Intent` and `Message Content Intent` which can be found under the `Bot` tab on the [developer portal](https://discord.com/developers/applications/)
+
 ## Features and Commands.
 
 ### Play
@@ -129,12 +127,12 @@ Enable the `Server Members Intent` and `Message Content Intent` which can be fou
 
 ### Userinfo
 
-* Get information about a user (/userinfo USER)
+- Get information about a user (/userinfo USER)
 
 ### Ban
 
-* Ban a player (/ban USER)
+- Ban a player (/ban USER)
 
 ### Purge
 
-* Delete the latest chat messages (/purge NUM_OF_MESSAGES)
+- Delete the latest chat messages (/purge NUM_OF_MESSAGES)
