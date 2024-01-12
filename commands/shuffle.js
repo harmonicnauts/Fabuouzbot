@@ -1,10 +1,10 @@
-const {GuildMember} = require('discord.js');
-const {useQueue} = require("discord-player");
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember } = require('discord.js');
+const { useQueue } = require("discord-player");
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'shuffle',
-    description: 'shuffle the queue!',
+    description: 'Shuffle / mengacak queue.',
     async execute(interaction) {
         const inVoiceChannel = isInVoiceChannel(interaction)
         if (!inVoiceChannel) {
@@ -13,7 +13,7 @@ module.exports = {
 
         await interaction.deferReply();
         const queue = useQueue(interaction.guild.id)
-        if (!queue || !queue.currentTrack) return void interaction.followUp({content: '❌ | No music is being played!'});
+        if (!queue || !queue.currentTrack) return void interaction.followUp({ content: '❌ | Tidak ada musik yang sedang dimainkan.' });
         try {
             queue.tracks.shuffle();
             const trimString = (str, max) => (str.length > max ? `${str.slice(0, max - 3)}...` : str);
@@ -22,7 +22,7 @@ module.exports = {
                     {
                         title: 'Now Playing',
                         description: trimString(
-                            `The Current song playing is 🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `,
+                            `Musik yang sedang dimainkan : 🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `,
                             4095,
                         ),
                     },
@@ -31,7 +31,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             return void interaction.followUp({
-                content: '❌ | Something went wrong!',
+                content: '❌ | Terjadi kesalahan.',
             });
         }
     },

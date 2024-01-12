@@ -1,10 +1,10 @@
-const {GuildMember} = require('discord.js');
-const {useQueue} = require("discord-player");
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember } = require('discord.js');
+const { useQueue } = require("discord-player");
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'queue',
-    description: 'View the queue of current songs!',
+    description: 'Menampilkan queue yang sedang berlangsung.',
     async execute(interaction) {
         const inVoiceChannel = isInVoiceChannel(interaction)
         if (!inVoiceChannel) {
@@ -18,13 +18,13 @@ module.exports = {
                 embeds: [
                     {
                         title: 'Now Playing',
-                        description: trimString(`The Current song playing is 🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `, 4095),
+                        description: trimString(`Musik yang sedang dimainkan :  🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `, 4095),
                     }
                 ]
             })
         } else {
             return void interaction.reply({
-                content: 'There is no song in the queue!'
+                content: 'Tidak ada musik pada queue'
             })
         }
     }

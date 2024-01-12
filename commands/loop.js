@@ -1,6 +1,6 @@
-const {GuildMember, ApplicationCommandOptionType} = require('discord.js');
-const {QueueRepeatMode, useQueue} = require('discord-player');
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember, ApplicationCommandOptionType } = require('discord.js');
+const { QueueRepeatMode, useQueue } = require('discord-player');
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'loop',
@@ -42,7 +42,7 @@ module.exports = {
 
             const queue = useQueue(interaction.guild.id)
             if (!queue || !queue.currentTrack) {
-                return void interaction.followUp({content: '❌ | No music is being played!'});
+                return void interaction.followUp({ content: '❌ | Sedang tidak ada musik yang dimainkan.' });
             }
 
             const loopMode = interaction.options.getInteger('mode');
@@ -50,12 +50,12 @@ module.exports = {
             const mode = loopMode === QueueRepeatMode.TRACK ? '🔂' : loopMode === QueueRepeatMode.QUEUE ? '🔁' : '▶';
 
             return void interaction.followUp({
-                content: `${mode} | Updated loop mode!`,
+                content: `${mode} | Loop mode terupdate.`,
             });
         } catch (error) {
             console.log(error);
             return void interaction.followUp({
-                content: 'There was an error trying to execute that command: ' + error.message,
+                content: 'Terjadi error pas running tu command: ' + error.message,
             });
         }
     },

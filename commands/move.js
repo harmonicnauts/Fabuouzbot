@@ -1,21 +1,21 @@
-const {GuildMember, ApplicationCommandOptionType} = require('discord.js');
-const {useQueue} = require("discord-player");
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember, ApplicationCommandOptionType } = require('discord.js');
+const { useQueue } = require("discord-player");
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'move',
-    description: 'move song position in the queue!',
+    description: 'Mindahin posisi musik di queue.',
     options: [
         {
             name: 'track',
             type: ApplicationCommandOptionType.Integer,
-            description: 'The track number you want to move',
+            description: 'Track yang mau dipindahin.',
             required: true,
         },
         {
             name: 'position',
             type: ApplicationCommandOptionType.Integer,
-            description: 'The position to move it to',
+            description: 'Posisi tujuan pemindahan track.',
             required: true,
         },
     ],
@@ -29,23 +29,23 @@ module.exports = {
         const queue = useQueue(interaction.guild.id)
 
         if (!queue || !queue.currentTrack)
-            return void interaction.followUp({content: '❌ | No music is being played!'});
+            return void interaction.followUp({ content: '❌ | Tidak ada musik yang dimainkan.' });
 
         const queueNumbers = [interaction.options.getInteger('track') - 1, interaction.options.getInteger('position') - 1];
 
         if (queueNumbers[0] > queue.tracks.size || queueNumbers[1] > queue.tracks.size)
-            return void interaction.followUp({content: '❌ | Track number greater than queue depth!'});
+            return void interaction.followUp({ content: '❌ | Posisi tujuan engga boleh lebih besar dari besar queue.' });
 
         try {
             const track = queue.node.remove(queueNumbers[0]);
             queue.node.insert(track, queueNumbers[1]);
             return void interaction.followUp({
-                content: `✅ | Moved **${track}**!`,
+                content: `✅ | Telah memindahkan **${track}**!`,
             });
         } catch (error) {
             console.log(error);
             return void interaction.followUp({
-                content: '❌ | Something went wrong!',
+                content: '❌ | Terjadi kesalahan.',
             });
         }
     },

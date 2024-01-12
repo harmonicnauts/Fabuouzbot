@@ -1,15 +1,15 @@
-const {GuildMember, ApplicationCommandOptionType} = require('discord.js');
-const {useQueue} = require("discord-player");
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember, ApplicationCommandOptionType } = require('discord.js');
+const { useQueue } = require("discord-player");
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'volume',
-    description: 'Change the volume!',
+    description: 'Memperbesar / memperkecil volume.',
     options: [
         {
             name: 'volume',
             type: ApplicationCommandOptionType.Integer,
-            description: 'Number between 0-200',
+            description: 'Angka di jangkauan 0-200',
             required: true,
         },
     ],
@@ -23,7 +23,7 @@ module.exports = {
         const queue = useQueue(interaction.guild.id);
         if (!queue || !queue.currentTrack)
             return void interaction.followUp({
-                content: '❌ | No music is being played!',
+                content: '❌ | Tidak ada musik yang sedang dimainkan.',
             });
 
         let volume = interaction.options.getInteger('volume');
@@ -32,7 +32,7 @@ module.exports = {
         const success = queue.node.setVolume(volume);
 
         return void interaction.followUp({
-            content: success ? `🔊 | Volume set to ${volume}!` : '❌ | Something went wrong!',
+            content: success ? `🔊 | Volume di-set ke ${volume}!` : '❌ | Terjadi kesalahan.',
         });
     },
 };

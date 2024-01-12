@@ -1,21 +1,21 @@
-const {GuildMember, ApplicationCommandOptionType} = require('discord.js');
-const {useQueue} = require("discord-player");
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember, ApplicationCommandOptionType } = require('discord.js');
+const { useQueue } = require("discord-player");
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'swap',
-    description: 'swap song positions in the queue!',
+    description: 'menukar posisi track pada queue.',
     options: [
         {
             name: 'track1',
             type: ApplicationCommandOptionType.Integer,
-            description: 'The track number you want to swap',
+            description: 'track yang ingin ditukar posisinya.',
             required: true,
         },
         {
             name: 'track2',
             type: ApplicationCommandOptionType.Integer,
-            description: 'The track number you want to swap',
+            description: 'track yang ingin ditukar posisinya.',
             required: true,
         },
     ],
@@ -27,14 +27,14 @@ module.exports = {
 
         await interaction.deferReply();
         const queue = useQueue(interaction.guild.id);
-        if (!queue || !queue.currentTrack) return void interaction.followUp({content: '❌ | No music is being played!'});
+        if (!queue || !queue.currentTrack) return void interaction.followUp({ content: '❌ | Tidak ada musik yang sedang dimainkan.' });
         const queueNumbers = [interaction.options.getInteger('track1') - 1, interaction.options.getInteger('track2') - 1];
         // Sort so the lowest number is first for swap logic to work
         queueNumbers.sort(function (a, b) {
             return a - b;
         });
         if (queueNumbers[1] > queue.getSize())
-            return void interaction.followUp({content: '❌ | Track number greater than queue depth!'});
+            return void interaction.followUp({ content: '❌ | Posisi tidak boleh melebihi ukuran queue.' });
 
         try {
             const track2 = queue.node.remove(queueNumbers[1]); // Remove higher track first to avoid list order issues
@@ -47,7 +47,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             return void interaction.followUp({
-                content: '❌ | Something went wrong!',
+                content: '❌ | Terjadi kesalahan.',
             });
         }
     },

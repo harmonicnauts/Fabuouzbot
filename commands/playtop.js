@@ -1,15 +1,15 @@
-const {GuildMember, ApplicationCommandOptionType} = require('discord.js');
-const {QueryType, useQueue, useMainPlayer} = require('discord-player');
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember, ApplicationCommandOptionType } = require('discord.js');
+const { QueryType, useQueue, useMainPlayer } = require('discord-player');
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'playtop',
-    description: 'Play a song before the next in your channel!',
+    description: 'Putar musik sebelum musik selanjutnya yang ada pada queue.',
     options: [
         {
             name: 'query',
             type: ApplicationCommandOptionType.String,
-            description: 'The song you want to play',
+            description: 'Musik yang dimainkan.',
             required: true,
         },
     ],
@@ -32,7 +32,7 @@ module.exports = {
                 .catch(() => {
                 });
             if (!searchResult || !searchResult.tracks.length)
-                return void interaction.followUp({content: 'No results were found!'});
+                return void interaction.followUp({ content: 'Tidak ada hasil yang muncul.' });
 
             const queue = useQueue(interaction.guild.id)
 
@@ -40,7 +40,7 @@ module.exports = {
                 if (!queue.connection) await queue.connect(interaction.member.voice.channel);
             } catch {
                 return void interaction.followUp({
-                    content: 'Could not join your voice channel!',
+                    content: 'Tidak bisa join channel.',
                 });
             }
 
@@ -52,7 +52,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             await interaction.followUp({
-                content: 'There was an error trying to execute that command: ' + error.message,
+                content: 'Terjadi error ketika menjalankan command : ' + error.message,
             });
         }
     },

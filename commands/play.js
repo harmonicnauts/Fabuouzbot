@@ -1,15 +1,15 @@
-const {GuildMember, ApplicationCommandOptionType} = require('discord.js');
-const {QueryType, useMainPlayer} = require('discord-player');
-const {isInVoiceChannel} = require("../utils/voicechannel");
+const { GuildMember, ApplicationCommandOptionType } = require('discord.js');
+const { QueryType, useMainPlayer } = require('discord-player');
+const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'play',
-    description: 'Play a song in your channel!',
+    description: 'Command untuk memainkan musik di channel Discord.',
     options: [
         {
             name: 'query',
             type: ApplicationCommandOptionType.String,
-            description: 'The song you want to play',
+            description: 'Query untuk musik yang ingin dimainkan.',
             required: true,
         },
     ],
@@ -26,7 +26,7 @@ module.exports = {
             const query = interaction.options.getString('query');
             const searchResult = await player.search(query)
             if (!searchResult.hasTracks())
-                return void interaction.followUp({content: 'No results were found!'});
+                return void interaction.followUp({ content: 'Tidak dapat menemukan apapun.' });
 
             try {
                 const res = await player.play(interaction.member.voice.channel.id, searchResult, {
@@ -46,17 +46,17 @@ module.exports = {
                 });
 
                 await interaction.followUp({
-                    content: `⏱ | Loading your ${searchResult.playlist ? 'playlist' : 'track'}...`,
+                    content: `⏱ | Memuat ${searchResult.playlist ? 'playlist' : 'track'} yang dipilih...`,
                 });
             } catch (error) {
                 await interaction.editReply({
-                    content: 'An error has occurred!'
+                    content: 'Ada error co.'
                 })
                 return console.log(error);
             }
         } catch (error) {
             await interaction.reply({
-                content: 'There was an error trying to execute that command: ' + error.message,
+                content: 'Terjadi error pas running tu command: ' + error.message,
             });
         }
     },

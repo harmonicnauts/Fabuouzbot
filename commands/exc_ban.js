@@ -1,13 +1,13 @@
-const {ApplicationCommandOptionType} = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
     name: 'ban',
-    description: 'Ban a player',
+    description: 'Ban member.',
     options: [
         {
             name: 'user',
             type: ApplicationCommandOptionType.User,
-            description: 'The user you want to ban',
+            description: 'Nama member yang ingin diban.',
             required: true,
         },
     ],
@@ -15,11 +15,11 @@ module.exports = {
         const member = interaction.options.getUser('user');
 
         if (!member) {
-            return interaction.reply('You need to mention the member you want to ban him');
+            return interaction.reply('Untuk mem-ban member ini, lu harus mention dia.');
         }
 
         if (!interaction.member.permissions.has('BAN_MEMBERS')) {
-            return interaction.reply("I can't ban this user.");
+            return interaction.reply("Gabisa ban ni member.");
         }
 
         const userinfo = client.users.cache.getMember(member);
@@ -28,13 +28,13 @@ module.exports = {
             .ban(member)
             .then(() => {
                 interaction.reply({
-                    content: `${userinfo.username} was banned.`,
+                    content: `${userinfo.username} telah di-ban.`,
                     ephemeral: true,
                 });
             })
             .catch(error =>
                 interaction.reply({
-                    content: `Sorry, an error occured.`,
+                    content: `Terjadi error.`,
                     ephemeral: true,
                 }),
             );

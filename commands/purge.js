@@ -1,11 +1,11 @@
 module.exports = {
     name: 'purge',
-    description: 'Delete the last messages in all chats.',
+    description: 'Menghapus beberapa pesan terakhir di seluruh chat channel.',
     options: [
         {
             name: 'num',
             type: 4, //'INTEGER' Type
-            description: 'The number of messages you want to delete. (max 100)',
+            description: 'Banyak pesan yang ingin dihapus. (max 100)',
             required: true,
         },
     ],
@@ -14,7 +14,7 @@ module.exports = {
 
         if (!deleteCount || deleteCount < 2 || deleteCount > 100) {
             return void interaction.reply({
-                content: `Please provide a number between 2 and 100 for the number of messages to delete`,
+                content: `Angka yang dimasukkan harus 2 <= 100.`,
                 ephemeral: true,
             });
         }
@@ -27,13 +27,13 @@ module.exports = {
             .bulkDelete(fetched)
             .then(() => {
                 interaction.reply({
-                    content: `Succesfully deleted messages`,
+                    content: `Berhasil menghapus pesan.`,
                     ephemeral: true,
                 });
             })
             .catch(error => {
                 interaction.reply({
-                    content: `Couldn't delete messages because of: ${error}`,
+                    content: `Tidak dapat menghapus pesan karena : ${error}`,
                     ephemeral: true,
                 });
             });

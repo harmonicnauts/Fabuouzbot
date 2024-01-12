@@ -4,14 +4,14 @@ const fs = require('fs');
 const Discord = require('discord.js');
 const Client = require('./client/Client');
 const config = require('./config.json');
-const {Player} = require('discord-player');
+const { Player } = require('discord-player');
 
-const {ActivityType} = require('discord.js');
+const { ActivityType } = require('discord.js');
 
 const client = new Client();
 client.commands = new Discord.Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js') && !file.startsWith('exc_'));
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -85,7 +85,7 @@ player.events.on('playerError', (queue, error) => {
 client.on('ready', function () {
     console.log('Ready!');
     client.user.presence.set({
-        activities: [{name: config.activity, type: Number(config.activityType)}],
+        activities: [{ name: config.activity, type: Number(config.activityType) }],
         status: Discord.Status.Ready
     })
 });

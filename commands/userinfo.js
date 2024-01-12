@@ -1,13 +1,13 @@
-const {ApplicationCommandOptionType} = require('discord.js');
+const { ApplicationCommandOptionType } = require('discord.js');
 
 module.exports = {
     name: 'userinfo',
-    description: 'Get information about a user.',
+    description: 'Menampilkan informasi dari user / member.',
     options: [
         {
             name: 'user',
             type: ApplicationCommandOptionType.User,
-            description: 'The user you want to get info about',
+            description: 'User / member yang ingin dilihat info nya.',
             required: true,
         },
     ],
@@ -15,7 +15,7 @@ module.exports = {
         const user = interaction.options.getUser('user');
 
         interaction.reply({
-            content: `Name: ${user.username}, ID: ${user.id}, Avatar: ${user.displayAvatarURL({dynamic: true})}`,
+            content: `Name: ${user.username}, ID: ${user.id}, Avatar: ${user.displayAvatarURL({ dynamic: true })}`,
             ephemeral: true,
         });
     },
