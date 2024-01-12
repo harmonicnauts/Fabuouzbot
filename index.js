@@ -41,31 +41,31 @@ player.extractors.loadDefault().then(r => console.log('Extractors loaded success
 });*/
 
 player.events.on('audioTrackAdd', (queue, song) => {
-    queue.metadata.channel.send(`🎶 | Song **${song.title}** added to the queue!`);
+    queue.metadata.channel.send(`🎶 | Menambahkan **${song.title}** ke queue.`);
 });
 
 player.events.on('playerStart', (queue, track) => {
-    queue.metadata.channel.send(`▶ | Started playing: **${track.title}**!`);
+    queue.metadata.channel.send(`▶ | Memainkan: **${track.title}**!`);
 });
 
 player.events.on('audioTracksAdd', (queue, track) => {
-    queue.metadata.channel.send(`🎶 | Tracks have been queued!`);
+    queue.metadata.channel.send(`🎶 | Track sedang diqueue.`);
 });
 
 player.events.on('disconnect', queue => {
-    queue.metadata.channel.send('❌ | I was manually disconnected from the voice channel, clearing queue!');
+    queue.metadata.channel.send('❌ | Bot telah di-disconnect secara manual. Membersihkan queue...');
 });
 
 player.events.on('emptyChannel', queue => {
-    queue.metadata.channel.send('❌ | Nobody is in the voice channel, leaving...');
+    queue.metadata.channel.send('❌ | Voice channel kosong. Meninggalkan channel...');
 });
 
 player.events.on('emptyQueue', queue => {
-    queue.metadata.channel.send('✅ | Queue finished!');
+    queue.metadata.channel.send('✅ | Queue selesai!');
 });
 
 player.events.on('error', (queue, error) => {
-    console.log(`[${queue.guild.name}] Error emitted from the connection: ${error.message}`);
+    console.log(`[${queue.guild.name}] Error dihasilkan dari koneksi : ${error.message}`);
 });
 
 // For debugging
@@ -109,7 +109,8 @@ client.on('messageCreate', async message => {
                 message.reply('Deployed!');
             })
             .catch(err => {
-                message.reply('Could not deploy commands! Make sure the bot has the application.commands permission!');
+                message.reply(
+                    'Tidak bisa menjalankan command deploy! Pastikan bot memiliki permission application.commands!');
                 console.error(err);
             });
     }
@@ -127,7 +128,7 @@ client.on('interactionCreate', async interaction => {
     } catch (error) {
         console.error(error);
         await interaction.followUp({
-            content: 'There was an error trying to execute that command!',
+            content: 'Terjadi kesalahan dalam menjalankan command.',
         });
     }
 });
