@@ -7,7 +7,7 @@ module.exports = {
         {
             name: 'user',
             type: ApplicationCommandOptionType.User,
-            description: 'Nama member yang ingin diban.',
+            description: 'Nama member yang mau diban.',
             required: true,
         },
     ],
@@ -15,7 +15,7 @@ module.exports = {
         const member = interaction.options.getUser('user');
 
         if (!member) {
-            return interaction.reply('Untuk mem-ban member ini, lu harus mention dia.');
+            return interaction.reply('Buat ngeban member ini, lu harus mention dia.');
         }
 
         if (!interaction.member.permissions.has('BAN_MEMBERS')) {

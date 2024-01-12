@@ -29,7 +29,7 @@ module.exports = {
         const queue = useQueue(interaction.guild.id)
 
         if (!queue || !queue.currentTrack)
-            return void interaction.followUp({ content: '❌ | Tidak ada musik yang dimainkan.' });
+            return void interaction.followUp({ content: '❌ | Lagi ga ada musik yang playing.' });
 
         const queueNumbers = [interaction.options.getInteger('track') - 1, interaction.options.getInteger('position') - 1];
 

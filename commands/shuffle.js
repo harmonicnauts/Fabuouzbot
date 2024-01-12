@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'shuffle',
-    description: 'Shuffle / mengacak queue.',
+    description: 'Shuffle / ngacak queue.',
     async execute(interaction) {
         const inVoiceChannel = isInVoiceChannel(interaction)
         if (!inVoiceChannel) {
@@ -13,7 +13,7 @@ module.exports = {
 
         await interaction.deferReply();
         const queue = useQueue(interaction.guild.id)
-        if (!queue || !queue.currentTrack) return void interaction.followUp({ content: '❌ | Tidak ada musik yang sedang dimainkan.' });
+        if (!queue || !queue.currentTrack) return void interaction.followUp({ content: '❌ | Lagi ga ada musik yang playing.' });
         try {
             queue.tracks.shuffle();
             const trimString = (str, max) => (str.length > max ? `${str.slice(0, max - 3)}...` : str);
@@ -22,7 +22,7 @@ module.exports = {
                     {
                         title: 'Now Playing',
                         description: trimString(
-                            `Musik yang sedang dimainkan : 🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `,
+                            `Musik yang lagi dimainkan : 🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `,
                             4095,
                         ),
                     },

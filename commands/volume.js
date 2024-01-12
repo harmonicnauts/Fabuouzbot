@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'volume',
-    description: 'Memperbesar / memperkecil volume.',
+    description: 'Gedein / kecilin volume.',
     options: [
         {
             name: 'volume',

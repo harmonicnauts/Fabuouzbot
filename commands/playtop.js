@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'playtop',
-    description: 'Putar musik sebelum musik selanjutnya yang ada pada queue.',
+    description: 'Maenin musik sebelum musik selanjutnya mulai.',
     options: [
         {
             name: 'query',
@@ -32,7 +32,7 @@ module.exports = {
                 .catch(() => {
                 });
             if (!searchResult || !searchResult.tracks.length)
-                return void interaction.followUp({ content: 'Tidak ada hasil yang muncul.' });
+                return void interaction.followUp({ content: 'Ga muncul apa-apa.' });
 
             const queue = useQueue(interaction.guild.id)
 
@@ -40,7 +40,7 @@ module.exports = {
                 if (!queue.connection) await queue.connect(interaction.member.voice.channel);
             } catch {
                 return void interaction.followUp({
-                    content: 'Tidak bisa join channel.',
+                    content: 'Gagal join channel.',
                 });
             }
 
@@ -52,7 +52,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             await interaction.followUp({
-                content: 'Terjadi error ketika menjalankan command : ' + error.message,
+                content: 'Ada error pas jalanin command : ' + error.message,
             });
         }
     },

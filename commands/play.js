@@ -26,7 +26,7 @@ module.exports = {
             const query = interaction.options.getString('query');
             const searchResult = await player.search(query)
             if (!searchResult.hasTracks())
-                return void interaction.followUp({ content: 'Tidak dapat menemukan apapun.' });
+                return void interaction.followUp({ content: 'Ga muncul apa-apa.' });
 
             try {
                 const res = await player.play(interaction.member.voice.channel.id, searchResult, {
@@ -50,7 +50,7 @@ module.exports = {
                 });
             } catch (error) {
                 await interaction.editReply({
-                    content: 'Ada error co.'
+                    content: `Ada error bro. : ${error}`
                 })
                 return console.log(error);
             }

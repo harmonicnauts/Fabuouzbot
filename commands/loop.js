@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'loop',
-    description: 'Sets loop mode',
+    description: 'Looping lagu yang sekarang dimainin.',
     options: [
         {
             name: 'mode',
@@ -42,7 +42,7 @@ module.exports = {
 
             const queue = useQueue(interaction.guild.id)
             if (!queue || !queue.currentTrack) {
-                return void interaction.followUp({ content: '❌ | Sedang tidak ada musik yang dimainkan.' });
+                return void interaction.followUp({ content: '❌ | Lagi ga ada musik yang playing.' });
             }
 
             const loopMode = interaction.options.getInteger('mode');

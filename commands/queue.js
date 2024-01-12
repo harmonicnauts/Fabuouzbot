@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'queue',
-    description: 'Menampilkan queue yang sedang berlangsung.',
+    description: 'Nampilin queue musik.',
     async execute(interaction) {
         const inVoiceChannel = isInVoiceChannel(interaction)
         if (!inVoiceChannel) {
@@ -18,13 +18,13 @@ module.exports = {
                 embeds: [
                     {
                         title: 'Now Playing',
-                        description: trimString(`Musik yang sedang dimainkan :  🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `, 4095),
+                        description: trimString(`Musik yang lagi dimainin:  🎶 | **${queue.currentTrack.title}**! \n 🎶 | ${queue}! `, 4095),
                     }
                 ]
             })
         } else {
             return void interaction.reply({
-                content: 'Tidak ada musik pada queue'
+                content: 'Lagi ga ada musik di queue.'
             })
         }
     }

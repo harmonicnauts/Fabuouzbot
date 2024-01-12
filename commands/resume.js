@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
     name: 'resume',
-    description: 'Resume musi.!',
+    description: 'Resume musik.',
     async execute(interaction) {
         const inVoiceChannel = isInVoiceChannel(interaction)
         if (!inVoiceChannel) {
@@ -15,7 +15,7 @@ module.exports = {
         const queue = useQueue(interaction.guild.id)
         if (!queue || !queue.currentTrack)
             return void interaction.followUp({
-                content: '❌ | Tidak ada musik yang sedang dimainkan',
+                content: '❌ | Lagi ga ada musik yang playing',
             });
         const success = queue.node.resume()
         return void interaction.followUp({

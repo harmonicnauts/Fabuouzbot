@@ -2,7 +2,7 @@ const fs = require('fs');
 
 module.exports = {
     name: 'help',
-    description: 'List semua command yang tersedia.',
+    description: 'List buat semua command.',
     execute(interaction) {
         let str = '';
         const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));

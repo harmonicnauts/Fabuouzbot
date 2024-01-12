@@ -4,7 +4,7 @@ const { isInVoiceChannel } = require("../utils/voicechannel");
 
 module.exports = {
   name: 'remove',
-  description: 'menghapus musik dari queue.',
+  description: 'Ngehapus musik dari queue.',
   options: [
     {
       name: 'number',
@@ -21,10 +21,10 @@ module.exports = {
 
     await interaction.deferReply();
     const queue = useQueue(interaction.guild.id);
-    if (!queue || !queue.currentTrack) return void interaction.followUp({ content: '❌ | Tidak ada musik yang sedang dimainkan.' });
+    if (!queue || !queue.currentTrack) return void interaction.followUp({ content: '❌ | Lagi ga ada musik yang playing.' });
     const number = interaction.options.getInteger('number') - 1;
     if (number > queue.tracks.size)
-      return void interaction.followUp({ content: '❌ | Jumlah musik tidak boleh melebihi ukuran queue.' });
+      return void interaction.followUp({ content: '❌ | Jumlah musik engga boleh melebihi ukuran queue.' });
     const removedTrack = queue.node.remove(number);
     return void interaction.followUp({
       content: removedTrack ? `✅ | Removed **${removedTrack}**!` : '❌ | Terjadi kesalahan.',
