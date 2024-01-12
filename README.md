@@ -1,4 +1,4 @@
-# Fabuouoz Bot
+# FabuouzBot
 
 Bot for Fabuouz Discord channel. For now it can only be a music player. Will be developed again in the future. Based on some [github music discord bot repository](https://github.com/TannerGabriel/discord-bot).
 
