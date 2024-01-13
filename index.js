@@ -10,7 +10,9 @@ const { ActivityType } = require('discord.js');
 const client = new Client();
 client.commands = new Discord.Collection();
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+// const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js') && !file.startsWith('exc_'));
+
 
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
