@@ -19,7 +19,7 @@ module.exports = {
 
         const userInfoEmbed = new EmbedBuilder()
             .setColor('#0349fc')
-            .setTitle(`${user.globalName}'s Information`)
+            .setTitle(`${user.bot ? user.tag : (user.globalName ? user.globalName : user.username)}'s Information`)
             .setThumbnail(user.displayAvatarURL({ dynamic: true }))
             .addFields(
                 { name: 'ID', value: user.id, inline: true },
