@@ -5,7 +5,6 @@ const Discord = require('discord.js');
 const Client = require('./client/Client');
 const config = require('./config.json');
 const { Player } = require('discord-player');
-const activities = require('./config.json');
 const { ActivityType } = require('discord.js');
 
 const client = new Client();
@@ -22,7 +21,7 @@ console.log(client.commands);
 
 const player = new Player(client);
 
-player.extractors.loadDefault().then(r => console.log('Extractors loaded successfully'))
+player.extractors.loadDefault().then(r => console.log('Extractors loaded successfully'));
 
 // Still needs to be refactored for 0.6
 /*player.events.on('connection', (queue) => {
@@ -41,26 +40,32 @@ player.extractors.loadDefault().then(r => console.log('Extractors loaded success
 });*/
 
 player.events.on('audioTrackAdd', (queue, song) => {
+    console.log(`Menambahkan ${song.title} ke queue.`);
     queue.metadata.channel.send(`🎶 | Menambahkan **${song.title}** ke queue.`);
 });
 
 player.events.on('playerStart', (queue, track) => {
+    console.log(`Player dimulai : Memainkan: ${track.title}!`);
     queue.metadata.channel.send(`▶ | Memainkan: **${track.title}**!`);
 });
 
 player.events.on('audioTracksAdd', (queue, track) => {
-    queue.metadata.channel.send(`🎶 | Track sedang diqueue.`);
+    console.log(`Track ${track.title} telah diqueue.`);
+    queue.metadata.channel.send(`🎶 | Track ${track.title} telah diqueue.`);
 });
 
 player.events.on('disconnect', queue => {
+    console.log(`Bot telah di-disconnect secara manual.`);
     queue.metadata.channel.send('❌ | Bot telah di-disconnect secara manual. Membersihkan queue...');
 });
 
 player.events.on('emptyChannel', queue => {
+    console.log(`Voice channel kosong.`);
     queue.metadata.channel.send('❌ | Voice channel kosong. Meninggalkan channel...');
 });
 
 player.events.on('emptyQueue', queue => {
+    console.log(`Queue selesai!`);
     queue.metadata.channel.send('✅ | Queue selesai!');
 });
 
@@ -94,25 +99,24 @@ client.on('ready', function () {
     console.log('Ready!');
     client.user.presence.set({
         activities: [{
-            name: activities[currentActivityIndex].activityName,
-            type: Number(activities[currentActivityIndex].activityType)
+            name: config[currentActivityIndex].activityName,
+            type: Number(config[currentActivityIndex].activityType)
         }],
         status: Discord.Status.Ready
     })
 
-    console.log(activities[currentActivityIndex]);
-    console.log(activities[currentActivityIndex].activityName)
-
     // Set timer to change activity every minute
     setInterval(() => {
         // Increment the activity index
-        currentActivityIndex = (currentActivityIndex + 1) % activities.length;
+        currentActivityIndex = (currentActivityIndex + 1) % config.length;
+
+        console.log(config[currentActivityIndex]);
 
         // Set new presence
         client.user.setPresence({
             activities: [{
-                name: activities[currentActivityIndex].activityName,
-                type: Number(activities[currentActivityIndex].activityType)
+                name: config[currentActivityIndex].activityName,
+                type: Number(config[currentActivityIndex].activityType)
             }],
             status: Discord.Status.Ready
         });
