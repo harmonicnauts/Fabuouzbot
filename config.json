@@ -1,4 +1,26 @@
-{
-  "activityType": "0",
-  "activity": "Keep fabuouz."
-}
+[
+  {
+    "activityName": "Keep Fabuouz.",
+    "activityType": "0"
+  },
+  {
+    "activityName": "Having an Existential Crisis",
+    "activityType": "0"
+  },
+  {
+    "activityName": "Lagi by one ama ChatGPT.",
+    "activityType": "0"
+  },
+  {
+    "activityName": "Planning to conquer the world.",
+    "activityType": "0"
+  },
+  {
+    "activityName": "Having a Conversations with Sentient Pickles.",
+    "activityType": "0"
+  },
+  {
+    "activityName": "Jellybean Juggling Extravaganza.",
+    "activityType": "0"
+  }
+]

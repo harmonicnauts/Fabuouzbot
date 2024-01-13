@@ -5,7 +5,7 @@ const Discord = require('discord.js');
 const Client = require('./client/Client');
 const config = require('./config.json');
 const { Player } = require('discord-player');
-
+const activities = require('./config.json');
 const { ActivityType } = require('discord.js');
 
 const client = new Client();
@@ -82,12 +82,41 @@ player.events.on('playerError', (queue, error) => {
     console.log(error);
 });*/
 
+let currentActivityIndex = 0;
+
+// Default format 
+// activities: [{ 
+//     name: config.activity, 
+//     type: Number(config.activityType) 
+// }],
+
 client.on('ready', function () {
     console.log('Ready!');
     client.user.presence.set({
-        activities: [{ name: config.activity, type: Number(config.activityType) }],
+        activities: [{
+            name: activities[currentActivityIndex].activityName,
+            type: Number(activities[currentActivityIndex].activityType)
+        }],
         status: Discord.Status.Ready
     })
+
+    console.log(activities[currentActivityIndex]);
+    console.log(activities[currentActivityIndex].activityName)
+
+    // Set timer to change activity every minute
+    setInterval(() => {
+        // Increment the activity index
+        currentActivityIndex = (currentActivityIndex + 1) % activities.length;
+
+        // Set new presence
+        client.user.setPresence({
+            activities: [{
+                name: activities[currentActivityIndex].activityName,
+                type: Number(activities[currentActivityIndex].activityType)
+            }],
+            status: Discord.Status.Ready
+        });
+    }, 60000); // 60000 ms = 1 minute
 });
 
 client.once('reconnecting', () => {
