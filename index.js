@@ -89,7 +89,7 @@ player.events.on('playerError', (queue, error) => {
     console.log(error);
 });*/
 
-let currentActivityIndex = 0;
+let currentActivityIndex = Math.floor(Math.random() * config.length);;
 
 // Default format 
 // activities: [{ 
@@ -110,9 +110,7 @@ client.on('ready', function () {
     // Set timer to change activity every minute
     setInterval(() => {
         // Increment the activity index
-        currentActivityIndex = (currentActivityIndex + 1) % config.length;
-
-        console.log(config[currentActivityIndex]);
+        currentActivityIndex = Math.floor(Math.random() * config.length);
 
         // Set new presence
         client.user.setPresence({
