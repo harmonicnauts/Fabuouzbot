@@ -1,7 +1,9 @@
 var convert = require('xml-js');
 
-async function fetchWeatherData(location, parameter) {
+async function fetchWeatherData(selectedLocation, selectedParam) {
   try {
+    console.log(selectedLocation);
+    console.log(selectedParam);
     const response = await fetch('https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-Indonesia.xml');
     const xmlText = await response.text();
 
@@ -9,27 +11,29 @@ async function fetchWeatherData(location, parameter) {
     const jsonData = JSON.parse(convert.xml2json(xmlText, options));
 
     const areaData = extractData(jsonData);
-    const areaDataMapped = areaData.map(area => area.area)
+    const areaDataMapped = areaData.map(area => area.area);
+    const areaDataFiltered = areaDataMapped.find(item => item.name === selectedLocation);
 
-    console.log('areaDataMapped', areaDataMapped);
-    console.log('First areaDataMapped', areaDataMapped[0]);
+    // console.log('areaDataFiltered', areaDataFiltered);
+    // console.log('First areaDataMapped', areaDataMapped.find(item => item.name === 'Banda Aceh'));
+    // console.log('areaDataFiltered.length', areaDataFiltered.length);
 
-    if (areaDataMapped.length > 0 && areaDataMapped[0].parameter) {
+    if (areaDataFiltered && areaDataFiltered.parameter) {
       const specificParameter = {
-        id: areaDataMapped[0].id,
-        name: areaDataMapped[0].name,
-        parameter: areaDataMapped[0].parameter[0]
+        id: areaDataFiltered.id,
+        name: areaDataFiltered.name,
+        parameter: areaDataFiltered.parameter.find(param => param.id === selectedParam)
       }
-      console.log('specificParameter', specificParameter);
+      // console.log('specificParameter', specificParameter);
 
       if (specificParameter.parameter.timerange) {
         const locationName = specificParameter.name;
         const labels = specificParameter.parameter.timerange.map(timeRange => timeRange.datetime);
         // console.log('labels', labels)
         const parameterData = specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
-        console.log('locationName', locationName);
-        console.log('labels', labels);
-        console.log('parameterData', parameterData);
+        // console.log('locationName', locationName);
+        // console.log('labels', labels);
+        // console.log('parameterData', parameterData);
 
         // console.log('jsonData', jsonData)
         // console.log('areaData', areaData)
@@ -39,7 +43,7 @@ async function fetchWeatherData(location, parameter) {
         return {
           labels: labels,
           locationName: locationName,
-          parameterData: parameterData
+          parameterData: parameterData,
         };
       } else {
         console.error('Invalid data structure: Ga ada field timerange.');

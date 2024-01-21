@@ -9,28 +9,49 @@ module.exports = {
     {
       name: 'parameter',
       type: ApplicationCommandOptionType.String,
-      description: 'Parameter yang mau ditampilin.',
+      description: '("hu", "humax", "tmax", "humin", "tmin", "t", "weather", "wd", "ws")',
       required: true,
     },
     {
       name: 'lokasi',
       type: ApplicationCommandOptionType.String,
-      description: 'Lokasi yang mau ditampilin.',
+      description: 'provinsi yang mau ditampilin. (nama full)',
       required: true,
     },
   ],
   async execute(interaction, client) {
     try {
-      // Fetch data
-      const { labels, areaData, parameterData } = await fetchWeatherData();
+      const idMapping = {
+        'hu': 'Humidity',
+        'humax': 'Max Humidity',
+        'tmax': 'Max Temperature',
+        'humin': 'Min Humidity',
+        'tmin': 'Min Temperature',
+        't': 'Temperature',
+        'weather': 'Weather',
+        'wd': 'Wind Direction',
+        'ws': 'Wind Speed'
+      };
 
+      const selectedLocation = interaction.options.getString('lokasi');
+      const selectedParam = interaction.options.getString('parameter');
+
+      const { labels, locationName, parameterData } = await fetchWeatherData(selectedLocation, selectedParam); // Fetch data
+
+      const selectedParameterLong = idMapping[selectedParam];
+
+      console.log('labels', labels);
+      console.log('locationName', locationName);
+      console.log('parameterData', parameterData);
 
       const data = {
         labels: labels,
-        datasets: areaData.map((area, index) => ({
-          label: area.area.name,
-          data: parameterData[index],
-        }))
+        datasets: [
+          {
+            label: locationName,
+            data: parameterData,
+          }
+        ]
       };
 
       const renderer = new ChartJSNodeCanvas({ type: 'jpg', width: 800, height: 300, backgroundColour: 'white' });
@@ -42,17 +63,13 @@ module.exports = {
       const attachment = new AttachmentBuilder(image, { name: 'graph.png' });
 
 
-      // console.log(`data.labels[0] : ${data.labels[0]}`);
-      // console.log(`data.datasets[0].label :  ${data.datasets[0].label}`);
-      // console.log(`data.datasets[0].data : ${data.datasets[0].data}`);
-
       // console.log(`labels : ${labels}`);
       // console.log(`areaData :`);
       // console.log(areaData);
       // console.log(`parameterData : ${parameterData}`)
 
       const chartEmbed = new EmbedBuilder()
-        .setTitle('test')
+        .setTitle(`Prediksi ${selectedParameterLong} di ${selectedLocation} `)
       chartEmbed.setImage("attachment://graph.png");
 
 
