@@ -1,27 +1,120 @@
 var convert = require('xml-js');
 
+document.addEventListener('DOMContentLoaded', fetchData);
+
+
 async function fetchWeatherData() {
   try {
     const response = await fetch('https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-Indonesia.xml');
     const xmlText = await response.text();
 
-    // Convert XML to JSON
-    // const parser = new DOMParser();
-    // const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-    const jsonData = JSON.parse(convert.xml2json(xmlText, { compact: false }));
+    const options = { compact: true, ignoreAttributes: false };
+    const jsonData = JSON.parse(convert.xml2json(xmlText, options));
 
-    // Extract the relevant data for chart.js
-    console.log(`jsonData : ${jsonData}`);
-    const areaData = jsonData.map(entry => entry.area);
-    console.log(`areaData : ${areaData}`);
-    const labels = areaData[0].parameter[0].timerange.map(timeRange => timeRange.datetime);
-    const temperatureData = areaData.map(area => area.parameter.find(param => param.id === 't').timerange.map(timeRange => parseFloat(timeRange.value[0].textContent)));
+    const areaData = extractData(jsonData);
+    // console.log('areaData[0].area.parameter[0]', areaData[0].area.parameter[0]);
 
-    // Plot the data using Chart.js
-    plotChart(labels, areaData, temperatureData);
+    if (areaData.length > 0 && areaData[0].area.parameter) {
+      const firstParameter = areaData[0].area.parameter[0];
+
+      if (firstParameter.timerange) {
+        const labels = firstParameter.timerange.map(timeRange => timeRange.datetime);
+        // console.log('labels', labels)
+        const temperatureData = areaData.map(area => {
+          // console.log('area inside map', area.area.parameter.find(param => param.id === 'hu'))
+          const temperatureParam = area.area.parameter.find(param => param.id === 'hu');
+          if (temperatureParam && temperatureParam.timerange) {
+            return temperatureParam.timerange.map(timeRange => parseFloat(timeRange.value._text));
+          }
+          return [];
+        });
+
+        console.log('jsonData', jsonData)
+        console.log('areaData', areaData)
+        console.log('labels', labels)
+        console.log('temperatureData', temperatureData)
+
+        plotChart(labels, areaData, temperatureData);
+      } else {
+        console.error('Invalid data structure: Ga ada field timerange.');
+      }
+    } else {
+      console.error('Invalid data structure: Ga ada field parameter.');
+    }
   } catch (error) {
-    console.error('Error fetching or processing data:', error);
+    console.error('Gagal fetch / proses data:', error);
   }
+}
+
+function extractData(jsonData) {
+  const areas = jsonData.data.forecast.area;
+
+  // console.log('areas', areas);
+
+  return areas.map(area => {
+    const areaData = {
+      id: area._attributes.id,
+      name: area.name.find(name => name._attributes['xml:lang'] === 'en_US')._text,
+      parameter: []
+    };
+
+    area.parameter.forEach(parameter => {
+      const multipleValues = (
+        parameter._attributes.description.toLowerCase().includes('temperature') ||
+        parameter._attributes.description.toLowerCase().includes('wind')
+      );
+      // console.log('parameter : ', parameter)
+      // console.log('multipleValues : ', multipleValues);
+      const paramData = {
+        id: parameter._attributes.id,
+        timerange: []
+      };
+
+      if (parameter.timerange) {
+        parameter.timerange.forEach(timerange => {
+          // console.log('timerange', timerange);
+          // console.log('atribut', timerange.value._attributes);
+
+          if (multipleValues) {
+            const timeData = {
+              datetime: timerange._attributes.datetime,
+              value: []
+            };
+
+            timerange.value.forEach(value_elm => {
+              const valueUnit = value_elm._attributes.unit;
+              const valueText = value_elm._text;
+
+              const valueData = {
+                unit: valueUnit,
+                _text: valueText
+              };
+              // console.log('value data : ', valueData);
+              timeData.value.push(valueData);
+            });
+
+            // console.log('timeData (multipleValues) : ', timeData);
+            paramData.timerange.push(timeData);
+          } else {
+            const timeData = {
+              datetime: timerange._attributes.datetime,
+              value: {
+                unit: timerange.value._attributes.unit,
+                _text: timerange.value._text
+              }
+            };
+
+            // console.log('timeData (singleValue) : ', timeData);
+            paramData.timerange.push(timeData);
+          }
+        });
+      }
+
+      areaData.parameter.push(paramData);
+    });
+
+    return { area: areaData };
+  });
 }
 
 // function parseXML(xml) {
