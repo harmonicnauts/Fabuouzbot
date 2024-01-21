@@ -17,21 +17,25 @@ async function fetchWeatherData() {
       if (firstParameter.timerange) {
         const labels = firstParameter.timerange.map(timeRange => timeRange.datetime);
         // console.log('labels', labels)
-        const temperatureData = areaData.map(area => {
+        const parameterData = areaData.map(area => {
           // console.log('area inside map', area.area.parameter.find(param => param.id === 'hu'))
-          const temperatureParam = area.area.parameter.find(param => param.id === 'hu');
-          if (temperatureParam && temperatureParam.timerange) {
-            return temperatureParam.timerange.map(timeRange => parseFloat(timeRange.value._text));
+          const paramName = area.area.parameter.find(param => param.id === 'hu');
+          if (paramName && paramName.timerange) {
+            return paramName.timerange.map(timeRange => parseFloat(timeRange.value._text));
           }
           return [];
         });
 
-        console.log('jsonData', jsonData)
-        console.log('areaData', areaData)
-        console.log('labels', labels)
-        console.log('temperatureData', temperatureData)
+        // console.log('jsonData', jsonData)
+        // console.log('areaData', areaData)
+        // console.log('labels', labels)
+        // console.log('temperatureData', temperatureData)
 
-        plotChart(labels, areaData, temperatureData);
+        return {
+          labels: labels,
+          areaData: areaData,
+          parameterData: parameterData
+        };
       } else {
         console.error('Invalid data structure: Ga ada field timerange.');
       }

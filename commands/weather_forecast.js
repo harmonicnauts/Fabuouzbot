@@ -21,15 +21,15 @@ module.exports = {
   async execute(interaction, client) {
     try {
       // Fetch data
-      const jsonData = await fetchWeatherData();
+      const { labels, areaData, parameterData } = await fetchWeatherData();
 
-      // Process data
-      const areaData = jsonData.map(entry => entry.area);
-      const labels = areaData[0].parameter[0].timerange.map(timeRange => timeRange.datetime);
-      const temperatureData = areaData.map(area => area.parameter.find(param => param.id === 't').timerange.map(timeRange => parseFloat(timeRange.value[0].textContent)));
+      console.log(labels)
+      console.log(areaData)
+      console.log(parameterData)
 
       console.log(`labels : ${labels}`)
-      console.log(`temperatureData : ${temperatureData}`)
+      console.log(`areaData :  ${areaData}`)
+      console.log(`temperatureData : ${parameterData}`)
 
       // Reply with the processed data
       interaction.reply({
