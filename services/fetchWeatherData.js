@@ -1,6 +1,6 @@
 var convert = require('xml-js');
 
-async function fetchWeatherData() {
+async function fetchWeatherData(location, parameter) {
   try {
     const response = await fetch('https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-Indonesia.xml');
     const xmlText = await response.text();
@@ -9,22 +9,27 @@ async function fetchWeatherData() {
     const jsonData = JSON.parse(convert.xml2json(xmlText, options));
 
     const areaData = extractData(jsonData);
-    // console.log('areaData[0].area.parameter[0]', areaData[0].area.parameter[0]);
+    const areaDataMapped = areaData.map(area => area.area)
 
-    if (areaData.length > 0 && areaData[0].area.parameter) {
-      const firstParameter = areaData[0].area.parameter[0];
+    console.log('areaDataMapped', areaDataMapped);
+    console.log('First areaDataMapped', areaDataMapped[0]);
 
-      if (firstParameter.timerange) {
-        const labels = firstParameter.timerange.map(timeRange => timeRange.datetime);
+    if (areaDataMapped.length > 0 && areaDataMapped[0].parameter) {
+      const specificParameter = {
+        id: areaDataMapped[0].id,
+        name: areaDataMapped[0].name,
+        parameter: areaDataMapped[0].parameter[0]
+      }
+      console.log('specificParameter', specificParameter);
+
+      if (specificParameter.parameter.timerange) {
+        const locationName = specificParameter.name;
+        const labels = specificParameter.parameter.timerange.map(timeRange => timeRange.datetime);
         // console.log('labels', labels)
-        const parameterData = areaData.map(area => {
-          // console.log('area inside map', area.area.parameter.find(param => param.id === 'hu'))
-          const paramName = area.area.parameter.find(param => param.id === 'hu');
-          if (paramName && paramName.timerange) {
-            return paramName.timerange.map(timeRange => parseFloat(timeRange.value._text));
-          }
-          return [];
-        });
+        const parameterData = specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
+        console.log('locationName', locationName);
+        console.log('labels', labels);
+        console.log('parameterData', parameterData);
 
         // console.log('jsonData', jsonData)
         // console.log('areaData', areaData)
@@ -33,7 +38,7 @@ async function fetchWeatherData() {
 
         return {
           labels: labels,
-          areaData: areaData,
+          locationName: locationName,
           parameterData: parameterData
         };
       } else {

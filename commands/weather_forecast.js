@@ -1,4 +1,5 @@
-const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
+const { ApplicationCommandOptionType, EmbedBuilder, AttachmentBuilder } = require('discord.js');
+const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 const { fetchWeatherData } = require('../services/fetchWeatherData');
 
 module.exports = {
@@ -23,6 +24,7 @@ module.exports = {
       // Fetch data
       const { labels, areaData, parameterData } = await fetchWeatherData();
 
+
       const data = {
         labels: labels,
         datasets: areaData.map((area, index) => ({
@@ -31,23 +33,32 @@ module.exports = {
         }))
       };
 
+      const renderer = new ChartJSNodeCanvas({ type: 'jpg', width: 800, height: 300, backgroundColour: 'white' });
+      const image = await renderer.renderToBuffer({
+        type: "line",
+        data: data,
+      });
+
+      const attachment = new AttachmentBuilder(image, { name: 'graph.png' });
 
 
-      console.log(`labels : ${data.labels[0]}`);
-      console.log(`areaData :  ${data.datasets[0].label}`);
-      console.log(`parameterData : ${data.datasets[0].data}`);
+      // console.log(`data.labels[0] : ${data.labels[0]}`);
+      // console.log(`data.datasets[0].label :  ${data.datasets[0].label}`);
+      // console.log(`data.datasets[0].data : ${data.datasets[0].data}`);
 
-      const userInfoEmbed = new EmbedBuilder()
-        .setColor('#0349fc')
-        .setTitle(`Tes 3 Day Weather Forecast`)
-        .addFields(
-          { name: 'Labels', value: `${data.labels[0]}` },
-          { name: 'areaData', value: `${data.datasets[0].label}` },
-          { name: 'parameterData', value: `${data.datasets[0].data}` },
-        )
-      // Reply with the processed data
+      // console.log(`labels : ${labels}`);
+      // console.log(`areaData :`);
+      // console.log(areaData);
+      // console.log(`parameterData : ${parameterData}`)
+
+      const chartEmbed = new EmbedBuilder()
+        .setTitle('test')
+      chartEmbed.setImage("attachment://graph.png");
+
+
       interaction.reply({
-        embeds: [userInfoEmbed],
+        embeds: [chartEmbed],
+        files: [attachment]
       });
     } catch (error) {
       console.error('Gagal fetch / proses data:', error);
