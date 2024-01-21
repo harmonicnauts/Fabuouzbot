@@ -1,8 +1,5 @@
 var convert = require('xml-js');
 
-document.addEventListener('DOMContentLoaded', fetchData);
-
-
 async function fetchWeatherData() {
   try {
     const response = await fetch('https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-Indonesia.xml');
