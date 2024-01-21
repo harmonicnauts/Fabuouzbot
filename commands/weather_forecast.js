@@ -1,5 +1,5 @@
-const { ApplicationCommandOptionType } = require('discord.js');
-const { fetchWeatherData } = require('../services/fetchWeatherData'); // Assuming fetchData.js is in the same directory
+const { ApplicationCommandOptionType, EmbedBuilder } = require('discord.js');
+const { fetchWeatherData } = require('../services/fetchWeatherData');
 
 module.exports = {
   name: 'weather_forecast',
@@ -23,22 +23,36 @@ module.exports = {
       // Fetch data
       const { labels, areaData, parameterData } = await fetchWeatherData();
 
-      console.log(labels)
-      console.log(areaData)
-      console.log(parameterData)
+      const data = {
+        labels: labels,
+        datasets: areaData.map((area, index) => ({
+          label: area.area.name,
+          data: parameterData[index],
+        }))
+      };
 
-      console.log(`labels : ${labels}`)
-      console.log(`areaData :  ${areaData}`)
-      console.log(`temperatureData : ${parameterData}`)
 
+
+      console.log(`labels : ${data.labels[0]}`);
+      console.log(`areaData :  ${data.datasets[0].label}`);
+      console.log(`parameterData : ${data.datasets[0].data}`);
+
+      const userInfoEmbed = new EmbedBuilder()
+        .setColor('#0349fc')
+        .setTitle(`Tes 3 Day Weather Forecast`)
+        .addFields(
+          { name: 'Labels', value: `${data.labels[0]}` },
+          { name: 'areaData', value: `${data.datasets[0].label}` },
+          { name: 'parameterData', value: `${data.datasets[0].data}` },
+        )
       // Reply with the processed data
       interaction.reply({
-        embeds: [userInfoEmbed], // You might want to create a new embed using the processed data
+        embeds: [userInfoEmbed],
       });
     } catch (error) {
-      console.error('Error fetching or processing data:', error);
-      // Handle the error or reply with an error message
-      interaction.reply('Error fetching or processing data. Please try again later.');
+      console.error('Gagal fetch / proses data:', error);
+
+      interaction.reply('Gagal fetch / proses data.');
     }
   },
 };
