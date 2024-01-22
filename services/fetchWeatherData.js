@@ -14,9 +14,17 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
     const areaDataMapped = areaData.map(area => area.area);
     const areaDataFiltered = areaDataMapped.find(item => item.name === selectedLocation);
 
-    // console.log('areaDataFiltered', areaDataFiltered);
-    // console.log('First areaDataMapped', areaDataMapped.find(item => item.name === 'Banda Aceh'));
-    // console.log('areaDataFiltered.length', areaDataFiltered.length);
+    const multValuesArray = [
+      'tmax', 'tmin', 't',
+      'wd', 'ws'
+    ]
+    const selectedMultValues = ['C', 'Kt', 'deg'];
+
+    const multipleValues = (
+      multValuesArray.includes(selectedParam.toLowerCase())
+    );
+
+
 
     if (areaDataFiltered && areaDataFiltered.parameter) {
       const specificParameter = {
@@ -24,21 +32,30 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
         name: areaDataFiltered.name,
         parameter: areaDataFiltered.parameter.find(param => param.id === selectedParam)
       }
-      // console.log('specificParameter', specificParameter);
+
+      // console.log('specificParameter', specificParameter)
 
       if (specificParameter.parameter.timerange) {
         const locationName = specificParameter.name;
         const labels = specificParameter.parameter.timerange.map(timeRange => timeRange.datetime);
-        // console.log('labels', labels)
-        const parameterData = specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
-        // console.log('locationName', locationName);
-        // console.log('labels', labels);
-        // console.log('parameterData', parameterData);
 
-        // console.log('jsonData', jsonData)
-        // console.log('areaData', areaData)
-        // console.log('labels', labels)
-        // console.log('temperatureData', temperatureData)
+        console.log('wheres the value', specificParameter.parameter.timerange
+          .map(timeRange => timeRange.value)
+          .flat()
+          .filter(value => selectedMultValues.includes(value.unit))
+          .forEach(value => console.log(value)))
+
+
+        // const parameterData = specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
+        //areaDataMapped.find(item => item.name === selectedLocation);
+        const parameterData = multipleValues ?
+          specificParameter.parameter.timerange
+            .map(timeRange => timeRange.value)
+            .flat()
+            .filter(value => selectedMultValues.includes(value.unit))
+            .map(value => value._text) :
+          specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
+
 
         return {
           labels: labels,
@@ -73,8 +90,7 @@ function extractData(jsonData) {
         parameter._attributes.description.toLowerCase().includes('temperature') ||
         parameter._attributes.description.toLowerCase().includes('wind')
       );
-      // console.log('parameter : ', parameter)
-      // console.log('multipleValues : ', multipleValues);
+
       const paramData = {
         id: parameter._attributes.id,
         timerange: []
@@ -82,8 +98,6 @@ function extractData(jsonData) {
 
       if (parameter.timerange) {
         parameter.timerange.forEach(timerange => {
-          // console.log('timerange', timerange);
-          // console.log('atribut', timerange.value._attributes);
 
           if (multipleValues) {
             const timeData = {
@@ -99,11 +113,9 @@ function extractData(jsonData) {
                 unit: valueUnit,
                 _text: valueText
               };
-              // console.log('value data : ', valueData);
               timeData.value.push(valueData);
             });
 
-            // console.log('timeData (multipleValues) : ', timeData);
             paramData.timerange.push(timeData);
           } else {
             const timeData = {
@@ -114,7 +126,6 @@ function extractData(jsonData) {
               }
             };
 
-            // console.log('timeData (singleValue) : ', timeData);
             paramData.timerange.push(timeData);
           }
         });
