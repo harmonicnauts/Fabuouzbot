@@ -54,7 +54,7 @@ module.exports = {
         ]
       };
 
-      const renderer = new ChartJSNodeCanvas({ type: 'jpg', width: 800, height: 300, backgroundColour: 'white' });
+      const renderer = new ChartJSNodeCanvas({ type: 'jpg', width: 1000, height: 400, backgroundColour: 'white' });
       const image = await renderer.renderToBuffer({
         type: "line",
         data: data,

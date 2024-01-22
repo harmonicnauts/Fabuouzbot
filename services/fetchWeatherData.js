@@ -88,6 +88,7 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
       if (specificParameter.parameter.timerange) {
         const locationName = specificParameter.name;
         const labels = specificParameter.parameter.timerange.map(timeRange => timeRange.datetime);
+        const formattedDates = convertTimestamps(labels);
 
         console.log('wheres the value', specificParameter.parameter.timerange
           .map(timeRange => timeRange.value)
@@ -108,7 +109,7 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
 
 
         return {
-          labels: labels,
+          labels: formattedDates,
           locationName: locationName,
           parameterData: parameterData,
         };
@@ -186,6 +187,21 @@ function extractData(jsonData) {
 
     return { area: areaData };
   });
+}
+
+function convertTimestamps(labels) {
+  const formattedDates = labels.map(timestamp => {
+    const year = timestamp.slice(0, 4);
+    const month = timestamp.slice(4, 6);
+    const day = timestamp.slice(6, 8);
+    const hour = timestamp.slice(8, 10);
+    const minute = timestamp.slice(10, 12);
+
+    const date = new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
+    return date.toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+  });
+
+  return formattedDates;
 }
 
 // function parseXML(xml) {
