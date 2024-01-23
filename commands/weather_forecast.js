@@ -40,9 +40,9 @@ module.exports = {
 
       const selectedParameterLong = idMapping[selectedParam];
 
-      console.log('labels', labels);
-      console.log('locationName', locationName);
-      console.log('parameterData', parameterData);
+      // console.log('labels', labels);
+      // console.log('locationName', locationName);
+      // console.log('parameterData', parameterData);
 
       const data = {
         labels: labels,
@@ -69,7 +69,9 @@ module.exports = {
       // console.log(`parameterData : ${parameterData}`)
 
       const chartEmbed = new EmbedBuilder()
-        .setTitle(`Prediksi ${selectedParameterLong} di ${selectedLocation} `)
+        .setTitle(`Prediksi ${selectedParameterLong}`)
+        .setFields({ name: 'Lokasi', value: selectedLocation })
+        .setFooter({ text: 'Data provided by BMKG at https://data.bmkg.go.id/prakiraan-cuaca/' })
       chartEmbed.setImage("attachment://graph.png");
 
 
