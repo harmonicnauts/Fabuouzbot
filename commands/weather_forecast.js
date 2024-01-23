@@ -84,7 +84,10 @@ module.exports = {
     } catch (error) {
       console.error('Gagal fetch / proses data:', error);
 
-      interaction.reply('Gagal fetch / proses data.');
+      interaction.reply({
+        content: 'Gagal fetch / proses data.',
+        ephemeral: true,
+      });
     }
   },
 };

@@ -90,11 +90,11 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
         const labels = specificParameter.parameter.timerange.map(timeRange => timeRange.datetime);
         const formattedDates = convertTimestamps(labels);
 
-        console.log('wheres the value', specificParameter.parameter.timerange
-          .map(timeRange => timeRange.value)
-          .flat()
-          .filter(value => selectedMultValues.includes(value.unit))
-          .forEach(value => console.log(value)))
+        // specificParameter.parameter.timerange
+        //   .map(timeRange => timeRange.value)
+        //   .flat()
+        //   .filter(value => selectedMultValues.includes(value.unit))
+        //   .forEach(value => console.log(value))
 
 
         // const parameterData = specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
