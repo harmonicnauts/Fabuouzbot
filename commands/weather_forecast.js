@@ -50,6 +50,8 @@ module.exports = {
           {
             label: locationName,
             data: parameterData,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.3,
           }
         ]
       };
