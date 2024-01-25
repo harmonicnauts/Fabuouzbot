@@ -1,4 +1,5 @@
 var convert = require('xml-js');
+var areaPerURL = require('../Data/areaPerURL.json')
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Parameter (key)
@@ -54,8 +55,17 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
   try {
     console.log(selectedLocation);
     console.log(selectedParam);
-    const response = await fetch('https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-Indonesia.xml');
+
+    const selectedArea = areaPerURL.areas.find(area => {
+      return area.name === selectedLocation || (area.areas && area.areas.includes(selectedLocation));
+    });
+
+    const url = `https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-${selectedArea.name}.xml`;
+    console.log('Fetching data from:', url);
+
+    const response = await fetch(url);
     const xmlText = await response.text();
+
 
     const options = { compact: true, ignoreAttributes: false };
     const jsonData = JSON.parse(convert.xml2json(xmlText, options));
@@ -73,32 +83,16 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
     const multipleValues = (
       multValuesArray.includes(selectedParam.toLowerCase())
     );
-
-
-
     if (areaDataFiltered && areaDataFiltered.parameter) {
       const specificParameter = {
         id: areaDataFiltered.id,
         name: areaDataFiltered.name,
         parameter: areaDataFiltered.parameter.find(param => param.id === selectedParam)
       }
-
-      // console.log('specificParameter', specificParameter)
-
       if (specificParameter.parameter.timerange) {
         const locationName = specificParameter.name;
         const labels = specificParameter.parameter.timerange.map(timeRange => timeRange.datetime);
         const formattedDates = convertTimestamps(labels);
-
-        // specificParameter.parameter.timerange
-        //   .map(timeRange => timeRange.value)
-        //   .flat()
-        //   .filter(value => selectedMultValues.includes(value.unit))
-        //   .forEach(value => console.log(value))
-
-
-        // const parameterData = specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
-        //areaDataMapped.find(item => item.name === selectedLocation);
         const parameterData = multipleValues ?
           specificParameter.parameter.timerange
             .map(timeRange => timeRange.value)
@@ -106,8 +100,6 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
             .filter(value => selectedMultValues.includes(value.unit))
             .map(value => value._text) :
           specificParameter.parameter.timerange.map(timeRange => timeRange.value._text);
-
-
         return {
           labels: formattedDates,
           locationName: locationName,
@@ -117,7 +109,7 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
         console.error('Invalid data structure: Ga ada field timerange.');
       }
     } else {
-      console.error('Invalid data structure: Ga ada field parameter.');
+      console.error('Invalid data structure: Ga ada field parameter atau lokasi tidak sesuai (gunakan nama full).');
     }
   } catch (error) {
     console.error('Gagal fetch / proses data:', error);
@@ -126,47 +118,37 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
 
 function extractData(jsonData) {
   const areas = jsonData.data.forecast.area;
-
-  // console.log('areas', areas);
-
   return areas.map(area => {
     const areaData = {
       id: area._attributes.id,
       name: area.name.find(name => name._attributes['xml:lang'] === 'en_US')._text,
       parameter: []
     };
-
     area.parameter.forEach(parameter => {
       const multipleValues = (
         parameter._attributes.description.toLowerCase().includes('temperature') ||
         parameter._attributes.description.toLowerCase().includes('wind')
       );
-
       const paramData = {
         id: parameter._attributes.id,
         timerange: []
       };
-
       if (parameter.timerange) {
         parameter.timerange.forEach(timerange => {
-
           if (multipleValues) {
             const timeData = {
               datetime: timerange._attributes.datetime,
               value: []
             };
-
             timerange.value.forEach(value_elm => {
               const valueUnit = value_elm._attributes.unit;
               const valueText = value_elm._text;
-
               const valueData = {
                 unit: valueUnit,
                 _text: valueText
               };
               timeData.value.push(valueData);
             });
-
             paramData.timerange.push(timeData);
           } else {
             const timeData = {
@@ -176,15 +158,12 @@ function extractData(jsonData) {
                 _text: timerange.value._text
               }
             };
-
             paramData.timerange.push(timeData);
           }
         });
       }
-
       areaData.parameter.push(paramData);
     });
-
     return { area: areaData };
   });
 }
@@ -196,52 +175,10 @@ function convertTimestamps(labels) {
     const day = timestamp.slice(6, 8);
     const hour = timestamp.slice(8, 10);
     const minute = timestamp.slice(10, 12);
-
     const date = new Date(`${year}-${month}-${day}T${hour}:${minute}:00`);
     return date.toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
   });
 
   return formattedDates;
 }
-
-// function parseXML(xml) {
-//   const jsonData = [];
-//   const areas = xml.querySelectorAll('area');
-
-//   areas.forEach(area => {
-//     const areaData = {
-//       id: area.getAttribute('id'),
-//       name: area.querySelector('name').textContent,
-//       parameter: []
-//     };
-
-//     const parameters = area.querySelectorAll('parameter[type="hourly"]');
-//     parameters.forEach(parameter => {
-//       const paramData = {
-//         id: parameter.getAttribute('id'),
-//         timerange: []
-//       };
-
-//       const timeranges = parameter.querySelectorAll('timerange');
-//       timeranges.forEach(timerange => {
-//         const timeData = {
-//           datetime: timerange.getAttribute('datetime'),
-//           value: [{
-//             unit: timerange.querySelector('value').getAttribute('unit'),
-//             textContent: timerange.querySelector('value').textContent
-//           }]
-//         };
-
-//         paramData.timerange.push(timeData);
-//       });
-
-//       areaData.parameter.push(paramData);
-//     });
-
-//     jsonData.push({ area: areaData });
-//   });
-
-//   return jsonData;
-// }
-
 module.exports = { fetchWeatherData };
