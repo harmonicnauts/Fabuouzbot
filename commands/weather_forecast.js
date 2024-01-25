@@ -72,7 +72,7 @@ module.exports = {
 
       const chartEmbed = new EmbedBuilder()
         .setTitle(`Prediksi ${selectedParameterLong}`)
-        .setFields({ name: 'Lokasi', value: selectedLocation })
+        .setFields({ name: 'Lokasi', value: locationName })
         .setFooter({ text: 'Data provided by BMKG at https://data.bmkg.go.id/prakiraan-cuaca/' })
       chartEmbed.setImage("attachment://graph.png");
 
