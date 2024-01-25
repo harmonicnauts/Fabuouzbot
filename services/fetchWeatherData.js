@@ -53,11 +53,11 @@ var areaPerURL = require('../Data/areaPerURL.json')
 
 async function fetchWeatherData(selectedLocation, selectedParam) {
   try {
-    console.log(selectedLocation);
-    console.log(selectedParam);
+    const lowercaseSelectedLocation = selectedLocation.toLowerCase();
+    const lowercaseSelectedParam = selectedParam.toLowerCase();
 
     const selectedArea = areaPerURL.areas.find(area => {
-      return area.name === selectedLocation || (area.areas && area.areas.includes(selectedLocation));
+      return area.name.toLowerCase() === lowercaseSelectedLocation || (area.areas && area.areas.map(area => area.toLowerCase()).includes(lowercaseSelectedLocation));
     });
 
     const url = `https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-${selectedArea.name}.xml`;
@@ -72,7 +72,7 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
 
     const areaData = extractData(jsonData);
     const areaDataMapped = areaData.map(area => area.area);
-    const areaDataFiltered = areaDataMapped.find(item => item.name === selectedLocation);
+    const areaDataFiltered = areaDataMapped.find(item => item.name.toLowerCase() === selectedLocation);
 
     const multValuesArray = [
       'tmax', 'tmin', 't',
@@ -87,7 +87,7 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
       const specificParameter = {
         id: areaDataFiltered.id,
         name: areaDataFiltered.name,
-        parameter: areaDataFiltered.parameter.find(param => param.id === selectedParam)
+        parameter: areaDataFiltered.parameter.find(param => param.id === lowercaseSelectedParam)
       }
       if (specificParameter.parameter.timerange) {
         const locationName = specificParameter.name;
