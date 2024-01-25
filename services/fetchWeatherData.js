@@ -57,7 +57,11 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
     const lowercaseSelectedParam = selectedParam.toLowerCase();
 
     const selectedArea = areaPerURL.areas.find(area => {
-      return area.name.toLowerCase() === lowercaseSelectedLocation || (area.areas && area.areas.map(area => area.toLowerCase()).includes(lowercaseSelectedLocation));
+      const cleanedAreaName = area.name.toLowerCase();
+
+      return customCompare(cleanedAreaName, lowercaseSelectedLocation) ||
+        (area.areas &&
+          area.areas.map(subArea => customCompare(subArea.toLowerCase(), lowercaseSelectedLocation)).includes(true));
     });
 
     const url = `https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-${selectedArea.name}.xml`;
@@ -72,7 +76,8 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
 
     const areaData = extractData(jsonData);
     const areaDataMapped = areaData.map(area => area.area);
-    const areaDataFiltered = areaDataMapped.find(item => item.name.toLowerCase() === selectedLocation);
+    const areaDataFiltered = areaDataMapped.find(item => customCompare(item.name, lowercaseSelectedLocation));
+    console.log(areaDataMapped)
 
     const multValuesArray = [
       'tmax', 'tmin', 't',
@@ -181,4 +186,19 @@ function convertTimestamps(labels) {
 
   return formattedDates;
 }
+
+const customCompare = (itemName, selectedLocation) => {
+  const prefixesToRemove = ["Kota ", "Kab. "];
+  let cleanedItemName = itemName.toLowerCase();
+
+  for (const prefix of prefixesToRemove) {
+    if (cleanedItemName.startsWith(prefix.toLowerCase())) {
+      cleanedItemName = cleanedItemName.substring(prefix.length);
+    }
+  }
+
+  cleanedItemName = cleanedItemName.trim();
+
+  return cleanedItemName === selectedLocation;
+};
 module.exports = { fetchWeatherData };
