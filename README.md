@@ -18,7 +18,7 @@ Install my-project with npm
 git clone https://github.com/Nycht1/Fabuouzbot.git
 
 # Enter into the directory
-cd discord-bot/
+cd FabuouzBot/
 
 # Install the dependencies
 npm install
