@@ -44,6 +44,30 @@ module.exports = {
       // console.log('locationName', locationName);
       // console.log('parameterData', parameterData);
 
+      const getColorScale = (value) => {
+        const colorScale = [
+          'rgb(6, 62, 114)',
+          'rgb(34, 112, 192)',
+          'rgb(57, 196, 234)',
+          'rgb(0, 255, 193)',
+          'rgb(0, 224, 71)',
+          'rgb(250, 255, 66)',
+          'rgb(255, 173, 13)',
+          'rgb(255, 108, 0)',
+          'rgb(179, 58, 0)',
+          'rgb(252, 38, 42)',
+          'rgb(226, 0, 34)',
+          'rgb(255, 0, 203)',
+          'rgb(201, 0, 154)',
+          'rgb(121, 0, 123)',
+        ];
+
+        const index = Math.min(Math.max(parseInt(value) - 1, 0), colorScale.length - 1);
+        return colorScale[index];
+      };
+      const backgroundColor = parameterData.map(value => getColorScale(value));
+
+
       const data = {
         labels: labels,
         datasets: [
@@ -51,6 +75,7 @@ module.exports = {
             label: locationName,
             data: parameterData,
             borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: backgroundColor,
             tension: 0.3,
           }
         ]
@@ -58,7 +83,7 @@ module.exports = {
 
       const renderer = new ChartJSNodeCanvas({ type: 'jpg', width: 1000, height: 400, backgroundColour: 'white' });
       const image = await renderer.renderToBuffer({
-        type: "line",
+        type: selectedParam === 'weather' ? 'bar' : 'line',
         data: data,
       });
 
