@@ -136,3 +136,7 @@ Enable the `Server Members Intent` and `Message Content Intent` which can be fou
 ### Purge
 
 - Delete the latest chat messages (/purge NUM_OF_MESSAGES)
+
+### Weather Forecast
+
+- Use BMKG's open data API to display forecasts for weather(weather), temperature(t, tmin, tmax), humidity(hu, humin, humax), wind speed (ws), wind direction (wd) parameter.
