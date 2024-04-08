@@ -6,6 +6,7 @@ const Client = require('./client/Client');
 const config = require('./config.json');
 const { Player } = require('discord-player');
 const { ActivityType } = require('discord.js');
+const { cyclePresenceStatus } = require('./utils/presenceManager');
 
 const client = new Client();
 client.commands = new Discord.Collection();
@@ -89,8 +90,6 @@ player.events.on('playerError', (queue, error) => {
     console.log(error);
 });*/
 
-let currentActivityIndex = Math.floor(Math.random() * config.length);;
-
 // Default format 
 // activities: [{ 
 //     name: config.activity, 
@@ -99,28 +98,8 @@ let currentActivityIndex = Math.floor(Math.random() * config.length);;
 
 client.on('ready', function () {
     console.log('Ready!');
-    client.user.presence.set({
-        activities: [{
-            name: config[currentActivityIndex].activityName,
-            type: Number(config[currentActivityIndex].activityType)
-        }],
-        status: Discord.Status.Ready
-    })
 
-    // Set timer to change activity every minute
-    setInterval(() => {
-        // Increment the activity index
-        currentActivityIndex = Math.floor(Math.random() * config.length);
-
-        // Set new presence
-        client.user.setPresence({
-            activities: [{
-                name: config[currentActivityIndex].activityName,
-                type: Number(config[currentActivityIndex].activityType)
-            }],
-            status: Discord.Status.Ready
-        });
-    }, 60000); // 60000 ms = 1 minute
+    cyclePresenceStatus(client, config, Discord);
 });
 
 client.once('reconnecting', () => {
