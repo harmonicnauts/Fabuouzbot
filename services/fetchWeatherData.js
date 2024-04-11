@@ -57,11 +57,7 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
     const lowercaseSelectedParam = selectedParam.toLowerCase();
 
     const selectedArea = areaPerURL.areas.find(area => {
-      const cleanedAreaName = area.name.toLowerCase();
-
-      return customCompare(cleanedAreaName, lowercaseSelectedLocation) ||
-        (area.areas &&
-          area.areas.map(subArea => customCompare(subArea.toLowerCase(), lowercaseSelectedLocation)).includes(true));
+      return (area.areas && area.areas.map(subArea => customCompare(subArea.toLowerCase(), lowercaseSelectedLocation)).includes(true));
     });
 
     const url = `https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-${selectedArea.name}.xml`;
@@ -76,8 +72,8 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
 
     const areaData = extractData(jsonData);
     const areaDataMapped = areaData.map(area => area.area);
+    console.log(areaDataMapped);
     const areaDataFiltered = areaDataMapped.find(item => customCompare(item.name, lowercaseSelectedLocation));
-    console.log(areaDataMapped)
 
     const multValuesArray = [
       'tmax', 'tmin', 't',
@@ -123,54 +119,57 @@ async function fetchWeatherData(selectedLocation, selectedParam) {
 
 function extractData(jsonData) {
   const areas = jsonData.data.forecast.area;
-  return areas.map(area => {
-    const areaData = {
-      id: area._attributes.id,
-      name: area.name.find(name => name._attributes['xml:lang'] === 'en_US')._text,
-      parameter: []
-    };
-    area.parameter.forEach(parameter => {
-      const multipleValues = (
-        parameter._attributes.description.toLowerCase().includes('temperature') ||
-        parameter._attributes.description.toLowerCase().includes('wind')
-      );
-      const paramData = {
-        id: parameter._attributes.id,
-        timerange: []
+  return areas
+    .filter(area => !area.name.find(name => name._attributes['xml:lang'] === 'en_US')._text.toLowerCase().includes('pelabuhan'))
+    .map(area => {
+      console.log(area)
+      const areaData = {
+        id: area._attributes.id,
+        name: area.name.find(name => name._attributes['xml:lang'] === 'en_US')._text,
+        parameter: []
       };
-      if (parameter.timerange) {
-        parameter.timerange.forEach(timerange => {
-          if (multipleValues) {
-            const timeData = {
-              datetime: timerange._attributes.datetime,
-              value: []
-            };
-            timerange.value.forEach(value_elm => {
-              const valueUnit = value_elm._attributes.unit;
-              const valueText = value_elm._text;
-              const valueData = {
-                unit: valueUnit,
-                _text: valueText
+      area.parameter.forEach(parameter => {
+        const multipleValues = (
+          parameter._attributes.description.toLowerCase().includes('temperature') ||
+          parameter._attributes.description.toLowerCase().includes('wind')
+        );
+        const paramData = {
+          id: parameter._attributes.id,
+          timerange: []
+        };
+        if (parameter.timerange) {
+          parameter.timerange.forEach(timerange => {
+            if (multipleValues) {
+              const timeData = {
+                datetime: timerange._attributes.datetime,
+                value: []
               };
-              timeData.value.push(valueData);
-            });
-            paramData.timerange.push(timeData);
-          } else {
-            const timeData = {
-              datetime: timerange._attributes.datetime,
-              value: {
-                unit: timerange.value._attributes.unit,
-                _text: timerange.value._text
-              }
-            };
-            paramData.timerange.push(timeData);
-          }
-        });
-      }
-      areaData.parameter.push(paramData);
+              timerange.value.forEach(value_elm => {
+                const valueUnit = value_elm._attributes.unit;
+                const valueText = value_elm._text;
+                const valueData = {
+                  unit: valueUnit,
+                  _text: valueText
+                };
+                timeData.value.push(valueData);
+              });
+              paramData.timerange.push(timeData);
+            } else {
+              const timeData = {
+                datetime: timerange._attributes.datetime,
+                value: {
+                  unit: timerange.value._attributes.unit,
+                  _text: timerange.value._text
+                }
+              };
+              paramData.timerange.push(timeData);
+            }
+          });
+        }
+        areaData.parameter.push(paramData);
+      });
+      return { area: areaData };
     });
-    return { area: areaData };
-  });
 }
 
 function convertTimestamps(labels) {
@@ -201,4 +200,5 @@ const customCompare = (itemName, selectedLocation) => {
 
   return cleanedItemName === selectedLocation;
 };
+
 module.exports = { fetchWeatherData };
