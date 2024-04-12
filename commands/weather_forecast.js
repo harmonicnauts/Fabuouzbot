@@ -15,7 +15,7 @@ module.exports = {
     {
       name: 'lokasi',
       type: ApplicationCommandOptionType.String,
-      description: 'provinsi yang mau ditampilin. (nama full)',
+      description: 'provinsi yang mau ditampilin (nama full). Contoh : Jakarta Barat, Surakarta, Surabaya',
       required: true,
     },
   ],
