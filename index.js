@@ -5,7 +5,6 @@ const Discord = require('discord.js');
 const Client = require('./client/Client');
 const config = require('./config.json');
 const { Player } = require('discord-player');
-const { ActivityType } = require('discord.js');
 const { cyclePresenceStatus } = require('./utils/presenceManager');
 
 const client = new Client();
@@ -124,6 +123,7 @@ client.on('messageCreate', async message => {
                 message.reply(
                     'Tidak bisa menjalankan command deploy! Pastikan bot memiliki permission application.commands!');
                 console.error(err);
+                console.error('Errors', err.rawError.errors['1'].name._errors);
             });
     }
 });
