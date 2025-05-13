@@ -34,6 +34,7 @@ module.exports = {
                     color: 0xffffff,
                 },
             ],
+            ephmeral: true
         });
     },
 };

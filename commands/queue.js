@@ -27,7 +27,8 @@ module.exports = {
                         title: `Now Playing 🎶 |  **${queue.currentTrack.title}**`,
                         description: trimString(`**${trimString(queueStr, 4095)}**\n`),
                     }
-                ]
+                ],
+                ephmeral: true
             })
         } else {
             return void interaction.reply({
